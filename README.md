@@ -3,41 +3,47 @@
 ### Before
 
 ```cpp
-    template <
-                class... Args,
-                class ElemType =
-                    typename std::decay<
-                        typename std::common_type<Args...>::type
-                    >::type
-             >
-    inline constexpr
-    typename std::enable_if<
-        (sizeof...(Args) > 0),
-        std::array<ElemType, sizeof...(Args)>
-    >::type
-    make_array(Args &&... args)
-    {
-        return {{ std::forward<ElemType>(args)... }};
-    }
+#include <type_traits>
+using namespace std;
+
+template <
+            class... Args,
+            class ElemType =
+                typename decay<
+                    typename common_type<Args...>::type
+                >::type
+            >
+inline constexpr
+typename enable_if<
+    (sizeof...(Args) > 0),
+    array<ElemType, sizeof...(Args)>
+>::type
+make_array(Args &&... args)
+{
+    return {{ forward<ElemType>(args)... }};
+}
 ```
 
 ###After
 
 ```cpp
-    template <
-                class... Args,
-                class ElemType =
-                    aliases::decay< aliases::common_type<Args...> >
-             >
-    inline constexpr
-    aliases::enable_if<
-        (sizeof...(Args) > 0),
-        std::array<ElemType, sizeof...(Args)>
-    >
-    make_array(Args &&... args)
-    {
-        return {{ std::forward<ElemType>(args)... }};
-    }
+#include <aliases/iterator_traits.hpp>
+using namespace aliases;
+
+template <
+            class... Args,
+            class ElemType =
+                decay< common_type<Args...> >
+            >
+inline constexpr
+enable_if<
+    (sizeof...(Args) > 0),
+    array<ElemType, sizeof...(Args)>
+>
+make_array(Args &&... args)
+{
+    return {{ forward<ElemType>(args)... }};
+}
 ```
 
 ### Requirements
